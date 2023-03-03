@@ -11,7 +11,18 @@
   "author": "Andrey Alexeev",
   "license": "ISC",
   "devDependencies": {
+    "browser-sync": "^2.28.1",
     "gulp": "^4.0.2",
-    "gulp-rm": "^2.0.0"
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-rm": "^2.0.0",
+    "gulp-sass": "^5.1.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "node-sass": "^8.0.0"
+  },
+  "dependencies": {
+    "normalize.css": "^8.0.1"
   }
 }

@@ -1,3 +1,10 @@
 .one {
-    color: red;
+    color: $main-color;
+    will-change: auto;
+    display: table;
+    flex-direction: column;
+}
+
+h1 {
+    color: blue;
 }
