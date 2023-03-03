@@ -1,18 +1,21 @@
-// src('относительный от gulpfile путь')
-// dest - записывает файлы в ('папку')
-// pipe - реализует механизм потоков
+// src('принимает относительный от gulpfile путь')
+// dest('принимает путь') - записывает файлы в переданный в аргументе путь
+// pipe - реализует механизм потоков (streams) в node.js
 // чтобы не писать gulp.task, метод task можно экспортировать в переменную
 
-const { src, dest, task, series, watch } = require('gulp');
+const { src, dest, task, series, watch } = require('gulp'); // чтобы не испортировать весь gulp, берем только то что используетс
 const rm = require( 'gulp-rm' ); // Плагин удаления файлов
-const sass = require('gulp-sass')(require('node-sass'));
-const cleanCSS = require('gulp-clean-css');
-const rename = require("gulp-rename");
-const sourcemaps = require('gulp-sourcemaps');
-const autoprefixer = require('gulp-autoprefixer');
-const concat = require('gulp-concat');
-const browserSync = require('browser-sync').create();
-const reload = browserSync.reload;
+const sass = require('gulp-sass')(require('node-sass')); // Компялятор scss
+const cleanCSS = require('gulp-clean-css'); // Минификация css
+const rename = require("gulp-rename"); // Переименование файлов (например для добавления .min постфикса в минифицированный файл)
+const sourcemaps = require('gulp-sourcemaps'); // формирует карту файла
+const autoprefixer = require('gulp-autoprefixer'); // добавляет префексеры css
+const concat = require('gulp-concat'); // конкатинация (склейка) файлов в один
+const browserSync = require('browser-sync').create(); // Создание сервера для разработки
+const reload = browserSync.reload; // Для перезагрузки страницы
+const sassGlob = require('gulp-sass-glob'); // Для реализации маски при импорте стилей
+const px2rem = require('gulp-smile-px2rem'); // Для перевода пикселей в rem
+// const gcmq = require('gulp-group-css-media-queries'); // Группировка медиазапросов для оптимизации итогового css файла
 
 const paths = {
   src: {
@@ -42,23 +45,35 @@ task( 'styles', () => {
   return src( paths.src.styles )
     .pipe(concat('main.scss'))
     .pipe(sourcemaps.init())
+    .pipe(sassGlob())
     .pipe( (sass().on('error', sass.logError)) )
+    .pipe(px2rem())
     .pipe(autoprefixer({
       overrideBrowserslist: ['> 1%']
     }))
     .pipe(sourcemaps.write('.'))
+    // .pipe(gcmq())
     .pipe(dest('dist'))
     .pipe(reload({ stream: true }));
 });
 
 task('minify:css', () => {
   return src('dist/main.css')
-    .pipe(cleanCSS({compatibility: '*'}))
+    .pipe(cleanCSS())
     .pipe(rename(function(path) {
       path.extname = ".min.css";
     }))
     .pipe(dest('dist'));
 });
+
+task('scripts', () => {
+  return src('src/scripts/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(concat('main.js'))
+    .pipe(sourcemaps.write())
+    .pipe(dest('dist'))
+    .pipe(reload({ stream: true }));
+ });
 
 task('server', () => {
   browserSync.init({
@@ -69,7 +84,9 @@ task('server', () => {
  });
 });
 
-watch('./src/styles/**/*.scss', series('styles'));
 watch('./src/*.html', series('copy:html'));
+watch('./src/styles/**/*.scss', series('styles'));
+watch('./src/scripts/**/*.js', series('scripts'));
 
-task('default', series('clean', 'copy:html', 'styles', 'server'));
+
+task('default', series('clean', 'copy:html', 'styles', 'scripts', 'server'));

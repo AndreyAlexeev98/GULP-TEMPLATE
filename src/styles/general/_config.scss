@@ -1,0 +1,19 @@
+$breakpoints: (
+  smart: 0px,
+  smart-x: 460px,
+  tablet: 740px,
+  laptop: 1000px,
+  desktop: 1260px,
+  wide: 1420px,
+  wide-x: 1660px
+);
+
+$max-width: (
+  smart: 320px,
+  smart-x: 480px,
+  tablet: 768px,
+  laptop: 1024px,
+  desktop: 1280px,
+  wide: 1440px,
+  wide-x: 1680px
+);

@@ -1,0 +1,62 @@
+@charset "UTF-8";
+
+$debug: true;
+
+// Шрифты
+$sans-serif: Arial, Helvetica, sans-serif;
+$serif: "Times New Roman", Times, serif;
+$mono: monospace;
+
+$verdana: Verdana, Geneva, sans-serif;
+$stem: Stem, $verdana;
+
+$base-font: $stem;
+
+//путь к папке изображений
+$i: '../img';
+
+// Цвета
+// используем английские названия цвета (red, green, blue, yellow и т.д.)
+// если оттенков цвета небольшое количество, стоит использовать модификаторы: dark, middle, light и т.п.;
+// Иначе добавлять 3х символьный модификатор оттенка:
+// модификатор оттенка складывается из первых символов группы
+// Пример #XxYyZz -> color-XYZ; #a9cfdd -> $color-acd;
+// если Xx = Yy = Zz, модификатор сокращается до двух символов. (Пример #cbcbcb -> $gray-cb;)
+// если X = x = Y = y = Z = z -> модификатор сокращается до одного символа (Пример #666 - $gray-6;)
+// В случае совпадении модификаторов оттенка одного цвета нужно оставить только один.
+
+$purple-918:          #931680; // button main active
+$purple-868:          #8a6384; // visited link
+$purple-b27:          #bf2c79; // button main hover
+
+$pink-e46:            #e8406c; // button main normal
+$pink-fef:            #fcebf0; // error bg
+
+$pink-f5e:            #f5e8f3;
+
+$orange-e86:          #ef816a;
+
+$yellow-fb4:          #f8b24d;
+
+$black:               #000000;
+
+$gray-111:            #131413;
+$gray-322:            #302f2f;
+$gray-232:            #2f302f;
+$gray-555:            #57595b;
+$gray-9aa:            #9ba0a3;
+$gray-ccc:            #c7cacc; // button main disabled color
+$gray-ddd:            #d3d8da; // service indicator
+$gray-eee:            #e2e5e4; // button main disabled
+$gray-fff:            #f3f6f6;
+$gray-f6f:            #f6f8f8;
+
+$white:               #ffffff;
+
+
+$text-dark:           #131413;
+$text-dark-2:         #525858;
+$text-gray-1:         #545454;
+$text-gray-2:         #879696;
+$text-gray-3:         #6E8282;
+

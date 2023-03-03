@@ -1,0 +1,57 @@
+// Вес шрифта
+// thin, hairline              100
+// extra-light, ultra-light    200
+// light                       300
+// normal, regular             400
+// medium                      500
+// semi-bold, demi-bold        600
+// bold                        700
+// extra-bold, ultra-bold      800
+// black, heavy                900
+
+@mixin set-font($dir, $file-name, $name: false, $local: false, $weight: normal, $style: normal, $stretch: normal) {
+  @if ($name == false) {
+    $name: $file-name;
+  }
+  $localFonts: ();
+
+  @if ($local == false) {
+    $localFonts: append($localFonts, local("#{$name}"), "comma");
+  } @else {
+    @each $localName in $local {
+      $localFonts: append($localFonts, local("#{$localName}"), "comma");
+    }
+  }
+
+  @font-face {
+    font-family: $name;
+    src: #{$localFonts},
+    url("#{$dir}/#{$file-name}.woff2") format("woff2"),
+    url("#{$dir}/#{$file-name}.woff") format("woff");
+    font-weight: $weight;
+    font-style: $style;
+    font-stretch: $stretch;
+    font-display: swap;
+  }
+}
+
+// @include set-font($dir, $file-name, $name: false, $local: false, $weight: normal, $style: normal);
+
+// $dir          относительный путь к папке шрифтов (../fonts/)
+// $file-name    имя файла шрифта без расширения, должно быть одинаковое у всех типов. (tahoma-web-regular)
+// $name         имя шрифта для CSS, ("Tahoma")
+// $local        список имен локальных шрифтов ("Tahoma-Regular", "Tahoma")
+// $weight       вес шрифта, (400)
+// $style        стиль шрифта, (italic)
+
+
+
+
+// @include set-font("../fonts", "tahoma-web-regular", "Tahoma", ("Tahoma-Regular", "Tahoma"), $weight: 400, $style: italic);
+
+@include set-font("../fonts", "stem-light", "Stem", ("Stem-Light"), $weight: 300, $style: normal);
+@include set-font("../fonts", "stem-light-italic", "Stem", ("Stem-LightItalic"), $weight: 300, $style: italic);
+@include set-font("../fonts", "stem-regular", "Stem", ("Stem-Regular", "Stem"), $weight: 400, $style: normal);
+@include set-font("../fonts", "stem-regular-italic", "Stem", ("Stem-Italic"), $weight: 400, $style: italic);
+@include set-font("../fonts", "stem-medium", "Stem", ("Stem-Medium"), $weight: 500, $style: normal);
+@include set-font("../fonts", "stem-bold", "Stem", ("Stem-Bold"), $weight: 700, $style: normal);

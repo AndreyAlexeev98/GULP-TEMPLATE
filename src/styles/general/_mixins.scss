@@ -1,0 +1,94 @@
+@function em($pxval, $base: 16) {
+  @if not unitless($pxval) {
+    $pxval: strip-units($pxval);
+  }
+  @if not unitless($base) {
+    $base: strip-units($base);
+  }
+  @return $pxval / $base * 1em;
+}
+
+@mixin font($size: false, $line: false, $f: false, $w: false, $s: false, $v: false) {
+  @if ($v and $s and $w and $size and $line and $f) {
+    font: $s $v $w #{$size}/#{$line} $f;
+  } @else if ($s and $w and $size and $line and $f) {
+    font: $s $w #{$size}/#{$line} $f;
+  } @else if ($w and $size and $line and $f) {
+    font: $w #{$size}/#{$line} $f;
+  } @else if ($f == false) {
+    @if ($size) {
+      font-size: $size;
+    }
+    @if ($line) {
+      line-height: $line;
+    }
+    @if ($w) {
+      font-weight: $w;
+    }
+    @if ($s) {
+      font-style: $s;
+    }
+    @if ($v) {
+      font-variant: $v;
+    }
+  }
+}
+
+@mixin hover() {
+  &:hover,
+  &:focus {
+    outline: none;
+    @content;
+  }
+}
+
+@mixin fullHover($classname: "is-active") {
+  &:hover,
+  &:focus,
+  &:active,
+  &.#{$classname} {
+    outline: none;
+    @content;
+  }
+}
+
+@mixin active($classname: "is-active") {
+  &:active,
+  &[aria-selected="true"],
+  &.#{$classname} {
+    @content;
+  }
+}
+
+@mixin disabled($classname: "is-disabled") {
+  &:disabled,
+  &[aria-disabled="true"],
+  &.#{$classname} {
+    @content;
+  }
+}
+
+@mixin after($content: " ") {
+  &::after {
+    content: $content;
+    @content;
+  }
+}
+
+@mixin before($content: " ") {
+  &::before {
+    content: $content;
+    @content;
+  }
+}
+
+@mixin background-image($image: false, $w: auto, $h: auto, $format: png) {
+  background-image: url("#{$i}/#{$image}.#{$format}");
+  background-repeat: no-repeat;
+  @if($w != auto or $h != auto){
+    background-size: #{$w} #{$h};
+  }
+  //@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+  //  background-image: url("#{$i}/#{$image}@2x.#{$format}");
+  //}
+}
