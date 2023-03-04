@@ -77,7 +77,7 @@ task( 'styles', () => {
       overrideBrowserslist: ['> 1%']
     }))
     .pipe(cleanCSS())
-    .pipe(sourcemaps.write('.'))
+    .pipe(sourcemaps.write())
     // .pipe(gcmq())
     .pipe(dest(DIST_PATH))
     .pipe(reload({ stream: true }));
@@ -123,12 +123,12 @@ task('server', () => {
 
 // Запускаем определенные такски при изменении определенных исходных файлов:
 watch(SRC_ALL_HTML_PATH, series('copy:html'));
-watch(SRC_ALL_SCSS_PATH, series('styles'));
-watch(SRC_ALL_JS_PATH, series('scripts'));
 watch(SRC_SVG_PATH, series('icons'));
 watch(SRC_PICTURE_PATH, series('copy:pictures'));
+watch(SRC_ALL_SCSS_PATH, series('styles'));
+watch(SRC_ALL_JS_PATH, series('scripts'));
 
-// Главная таска, запускается командой gulp
+// Сначало идет очистка выходных файлов, затем паралельно (для оптимизации) выполняются таски которые могут не ждать завершения друг друга, затем запускается сервер
 task('default', 
   series(
     'clean', 
@@ -136,5 +136,3 @@ task('default',
     'server'
   )
 );
-
-// Остальные таски запускаются командой gulp {имя таски}
