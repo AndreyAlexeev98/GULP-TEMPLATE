@@ -8,19 +8,51 @@
     <link rel="stylesheet" href="main.min.css">
 </head>
     <body>
-    <h1>Gulp Template</h1>
-    <button type="button" data-hystmodal="#modal">Open modal with id=modal</button>
-    <div class="hystmodal" id="modal" aria-hidden="true">
-        <div class="hystmodal__wrap">
-            <div class="hystmodal__window" role="dialog" aria-modal="true">
-                <button data-hystclose class="hystmodal__close">Закрыть</button>
-                <div>
-                    <h2>Modal Content</h2>
-                    <div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nihil iure corrupti amet odio eveniet, hic nam deleniti dolore incidunt impedit blanditiis cumque asperiores tempora molestias vel soluta illum excepturi natus!</div>
+        <header class="header">
+            <div class="container">
+                <div class="header__container">
+                    <svg class="header__logo">
+                        <use href="/media/icons/sprite.svg#world"></use>
+                    </svg>
+                    <div class="socials">
+                        <ul class="socials__list">
+                            <li class="socials__item">
+                                <a href="https://vk.com" class="socials__link">
+                                    <svg class="icon_svg socials__icon">
+                                        <use href="/media/icons/sprite.svg#vk"></use>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="socials__item">
+                                <a href="https://t.me/AndreyAlexeev98" class="socials__link">
+                                    <svg class="icon_svg socials__icon">
+                                        <use href="/media/icons/sprite.svg#tg"></use>
+                                    </svg>            
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main>
+            <div class="container">
+                <h1>Gulp Template</h1>
+                <button type="button" data-hystmodal="#modal">Open modal with id=modal</button>
+            </div>
+        </main>
+        <footer></footer>    
+        <div class="hystmodal" id="modal" aria-hidden="true">
+            <div class="hystmodal__wrap">
+                <div class="hystmodal__window" role="dialog" aria-modal="true">
+                    <button data-hystclose class="hystmodal__close">Закрыть</button>
+                    <div>
+                        <h2>Modal Content</h2>
+                        <div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nihil iure corrupti amet odio eveniet, hic nam deleniti dolore incidunt impedit blanditiis cumque asperiores tempora molestias vel soluta illum excepturi natus!</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     <script src="main.min.js"></script>
     </body>
 </html>

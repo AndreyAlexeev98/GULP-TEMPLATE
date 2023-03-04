@@ -1,0 +1,12 @@
+.header {
+    &__container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    &__logo {
+        width: 100px;
+        height: 100px;
+        fill: darkgoldenrod;
+    }
+}

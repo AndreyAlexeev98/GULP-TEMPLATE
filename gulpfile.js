@@ -18,6 +18,9 @@ const px2rem = require('gulp-smile-px2rem'); // Для перевода пикс
 // const gcmq = require('gulp-group-css-media-queries'); // Группировка медиазапросов для оптимизации итогового css файла
 const babel = require('gulp-babel'); // Транскомпилятор JS
 const uglify = require('gulp-uglify'); // Минификация JS
+const svgo = require('gulp-svgo'); // Оптимизация xml кода
+const svgSprite = require('gulp-svg-sprite'); // Для склейки svg в спрайт
+
 
 const paths = {
   src: {
@@ -36,6 +39,27 @@ const paths = {
     'src/scripts/*.js'
    ]
 };
+
+task('icons', () => {
+  return src('src/img/icons/**/*.svg')
+  .pipe(svgo({
+    plugins: [
+      {
+        removeAttrs: {
+          attrs: '(fill|stroke|style|width|height|data.*)'
+        }
+      }
+    ]
+  }))
+  .pipe(svgSprite({
+    mode: {
+      symbol: {
+        sprite: '../sprite.svg'
+      }
+    }
+  }))
+  .pipe(dest('dist/media/icons'))
+});
 
 task( 'clean', () => {
   return src( 'dist/**/*', { read: false }).pipe( rm() )
@@ -98,6 +122,7 @@ task('server', () => {
 watch('./src/*.html', series('copy:html'));
 watch('./src/styles/**/*.scss', series('styles'));
 watch('./src/scripts/**/*.js', series('scripts'));
+watch('./src/img/icons/**/*.svg', series('icons'));
 
 
-task('default', series('clean', 'copy:html', 'styles', 'scripts', 'server'));
+task('default', series('clean', 'copy:html', 'icons', 'styles', 'scripts', 'server'));
