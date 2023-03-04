@@ -5,11 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Test Server</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="main.min.css">
 </head>
     <body>
-    <h1>Hello Worl</h1>
-    <h2>lol</h2>
-    <script src="main.js"></script>
+    <h1>Gulp Template</h1>
+    <button type="button" data-hystmodal="#modal">Open modal with id=modal</button>
+    <div class="hystmodal" id="modal" aria-hidden="true">
+        <div class="hystmodal__wrap">
+            <div class="hystmodal__window" role="dialog" aria-modal="true">
+                <button data-hystclose class="hystmodal__close">Закрыть</button>
+                <div>
+                    <h2>Modal Content</h2>
+                    <div>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nihil iure corrupti amet odio eveniet, hic nam deleniti dolore incidunt impedit blanditiis cumque asperiores tempora molestias vel soluta illum excepturi natus!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="main.min.js"></script>
     </body>
 </html>

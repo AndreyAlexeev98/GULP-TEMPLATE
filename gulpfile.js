@@ -16,6 +16,8 @@ const reload = browserSync.reload; // Для перезагрузки стран
 const sassGlob = require('gulp-sass-glob'); // Для реализации маски при импорте стилей
 const px2rem = require('gulp-smile-px2rem'); // Для перевода пикселей в rem
 // const gcmq = require('gulp-group-css-media-queries'); // Группировка медиазапросов для оптимизации итогового css файла
+const babel = require('gulp-babel'); // Транскомпилятор JS
+const uglify = require('gulp-uglify'); // Минификация JS
 
 const paths = {
   src: {
@@ -23,12 +25,16 @@ const paths = {
       css: './css',
       scss: './scss',
       node_modules: './node_modules/',
-      vendor: './vendor',
-      styles: [
-        'node_modules/normalize.css/normalize.css',
-        'src/styles/main.scss'
-      ],
-  }
+  },
+  styles: [
+    'node_modules/normalize.css/normalize.css',
+    'node_modules/hystmodal/dist/hystmodal.min.css',
+    'src/styles/main.scss'
+  ],
+  scripts: [
+    'node_modules/hystmodal/dist/hystmodal.min.js',
+    'src/scripts/*.js'
+   ]
 };
 
 task( 'clean', () => {
@@ -42,8 +48,8 @@ task( 'copy:html', () => {
 });
 
 task( 'styles', () => {
-  return src( paths.src.styles )
-    .pipe(concat('main.scss'))
+  return src( paths.styles )
+    .pipe(concat('main.min.scss'))
     .pipe(sourcemaps.init())
     .pipe(sassGlob())
     .pipe( (sass().on('error', sass.logError)) )
@@ -51,6 +57,7 @@ task( 'styles', () => {
     .pipe(autoprefixer({
       overrideBrowserslist: ['> 1%']
     }))
+    .pipe(cleanCSS())
     .pipe(sourcemaps.write('.'))
     // .pipe(gcmq())
     .pipe(dest('dist'))
@@ -67,9 +74,13 @@ task('minify:css', () => {
 });
 
 task('scripts', () => {
-  return src('src/scripts/*.js')
+  return src(paths.scripts)
     .pipe(sourcemaps.init())
-    .pipe(concat('main.js'))
+    .pipe(concat('main.min.js', {newLine: ';'})) // new line - что между модулями расставлялись - ;
+    .pipe(babel({
+      presets: ['@babel/env']
+    }))
+    .pipe(uglify())
     .pipe(sourcemaps.write())
     .pipe(dest('dist'))
     .pipe(reload({ stream: true }));
