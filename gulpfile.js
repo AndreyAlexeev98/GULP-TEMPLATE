@@ -3,7 +3,7 @@
 // pipe - реализует механизм потоков (streams) в node.js
 // чтобы не писать gulp.task, метод task можно экспортировать в переменную
 
-const { src, dest, task, series, watch } = require('gulp'); // чтобы не испортировать весь gulp, берем только то что используетс
+const { src, dest, task, series, watch, parallel } = require('gulp'); // чтобы не испортировать весь gulp, берем только то что используетс
 const rm = require( 'gulp-rm' ); // Плагин удаления файлов
 const sass = require('gulp-sass')(require('node-sass')); // Компялятор scss
 const cleanCSS = require('gulp-clean-css'); // Минификация css
@@ -21,27 +21,17 @@ const uglify = require('gulp-uglify'); // Минификация JS
 const svgo = require('gulp-svgo'); // Оптимизация xml кода
 const svgSprite = require('gulp-svg-sprite'); // Для склейки svg в спрайт
 
+// Импорт конфигурации проекта
+const { SRC_PATH, DIST_PATH, STYLE_LIBS, JS_LIBS, SRC_ALL_HTML_PATH, SRC_ALL_SCSS_PATH, SRC_MAIN_SCSS_PATH, SRC_ALL_JS_PATH, SRC_SVG_PATH, SRC_PICTURE_PATH, MEDIA_ICONS_PATH, MEDIA_PICTURE_PATH } = require('./gulp.config');
 
-const paths = {
-  src: {
-      base: './',
-      css: './css',
-      scss: './scss',
-      node_modules: './node_modules/',
-  },
-  styles: [
-    'node_modules/normalize.css/normalize.css',
-    'node_modules/hystmodal/dist/hystmodal.min.css',
-    'src/styles/main.scss'
-  ],
-  scripts: [
-    'node_modules/hystmodal/dist/hystmodal.min.js',
-    'src/scripts/*.js'
-   ]
-};
+// Очистка папки с готовыми файлами (применяется для корректного обновления файлов при изменении исходников)
+task( 'clean', () => {
+  return src(`${DIST_PATH}/**/*`, { read: false }).pipe( rm() )
+});
 
+// Работа с иконками
 task('icons', () => {
-  return src('src/img/icons/**/*.svg')
+  return src(SRC_SVG_PATH)
   .pipe(svgo({
     plugins: [
       {
@@ -58,21 +48,26 @@ task('icons', () => {
       }
     }
   }))
-  .pipe(dest('dist/media/icons'))
+  .pipe(dest(MEDIA_ICONS_PATH))
 });
 
-task( 'clean', () => {
-  return src( 'dist/**/*', { read: false }).pipe( rm() )
-});
-
+// Работа с html
 task( 'copy:html', () => {
-  return src('src/*.html')
-  .pipe(dest('dist'))
+  return src(SRC_ALL_HTML_PATH)
+  .pipe(dest(DIST_PATH))
   .pipe(reload({ stream: true }));
 });
 
+// Работа с картинками
+task( 'copy:pictures', () => {
+  return src(SRC_PICTURE_PATH)
+  .pipe(dest(MEDIA_PICTURE_PATH))
+  .pipe(reload({ stream: true }));
+});
+
+// Работа со стилями
 task( 'styles', () => {
-  return src( paths.styles )
+  return src([...STYLE_LIBS, SRC_MAIN_SCSS_PATH])
     .pipe(concat('main.min.scss'))
     .pipe(sourcemaps.init())
     .pipe(sassGlob())
@@ -84,45 +79,62 @@ task( 'styles', () => {
     .pipe(cleanCSS())
     .pipe(sourcemaps.write('.'))
     // .pipe(gcmq())
-    .pipe(dest('dist'))
+    .pipe(dest(DIST_PATH))
     .pipe(reload({ stream: true }));
 });
 
+// Минификация css
 task('minify:css', () => {
-  return src('dist/main.css')
+  return src(`${DIST_PATH}/main.css`)
     .pipe(cleanCSS())
     .pipe(rename(function(path) {
       path.extname = ".min.css";
     }))
-    .pipe(dest('dist'));
+    .pipe(dest(DIST_PATH));
 });
 
+// Работа с JsvaScript
 task('scripts', () => {
-  return src(paths.scripts)
+  return src([...JS_LIBS, SRC_ALL_JS_PATH])
     .pipe(sourcemaps.init())
-    .pipe(concat('main.min.js', {newLine: ';'})) // new line - что между модулями расставлялись - ;
+    .pipe(concat('main.min.js', {newLine: ';'})) // new line - установка между модулями знака - ';', для избежания ошибок при интерпритации
     .pipe(babel({
       presets: ['@babel/env']
     }))
     .pipe(uglify())
     .pipe(sourcemaps.write())
-    .pipe(dest('dist'))
+    .pipe(dest(DIST_PATH))
     .pipe(reload({ stream: true }));
  });
 
 task('server', () => {
   browserSync.init({
      server: {
-        baseDir: "./dist"
+        baseDir: DIST_PATH
      },
-     open: true
+     open: true,
+    /* Если потребуется перехвачивать с другого порта:
+    server - удалить,
+    notify: false,
+    proxy: "localhost:41080" // - номер другого порта
+    */
  });
 });
 
-watch('./src/*.html', series('copy:html'));
-watch('./src/styles/**/*.scss', series('styles'));
-watch('./src/scripts/**/*.js', series('scripts'));
-watch('./src/img/icons/**/*.svg', series('icons'));
+// Запускаем определенные такски при изменении определенных исходных файлов:
+watch(SRC_ALL_HTML_PATH, series('copy:html'));
+watch(SRC_ALL_SCSS_PATH, series('styles'));
+watch(SRC_ALL_JS_PATH, series('scripts'));
+watch(SRC_SVG_PATH, series('icons'));
+watch(SRC_PICTURE_PATH, series('copy:pictures'));
 
+// Главная таска, запускается командой gulp
+task('default', 
+  series(
+    'clean', 
+    parallel('copy:html', 'copy:pictures', 'icons', 'styles', 'scripts', ),  
+    'server'
+  )
+);
 
-task('default', series('clean', 'copy:html', 'icons', 'styles', 'scripts', 'server'));
+// Остальные таски запускаются командой gulp {имя таски}

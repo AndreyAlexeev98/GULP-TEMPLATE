@@ -7,7 +7,6 @@
         &:not(:last-child) {
             margin-right: 20px;
         }
-        transition: fill .3s;
         &:hover {
             .socials__icon {
                 fill: aqua;
@@ -15,6 +14,7 @@
         }
     }
     &__icon {
+        transition: fill .3s;
         width: 50px;
         height: 50px;
     }
